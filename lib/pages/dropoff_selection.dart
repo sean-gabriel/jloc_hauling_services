@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jloc_hauling_services/pages/booking_service.dart';
 import 'package:jloc_hauling_services/pages/login_page.dart';
 import 'package:jloc_hauling_services/pages/pickup_selection.dart';
 import 'package:jloc_hauling_services/pages/signup_page.dart';
@@ -12,9 +13,7 @@ class DropOffSelectionPage extends StatefulWidget {
   State<DropOffSelectionPage> createState() => _DropOffSelectionPageState();
 }
 
-
 class _DropOffSelectionPageState extends State<DropOffSelectionPage> {
-  
   final addressController = TextEditingController();
   final noteController = TextEditingController();
   final contactNumberController = TextEditingController();
@@ -26,11 +25,10 @@ class _DropOffSelectionPageState extends State<DropOffSelectionPage> {
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         centerTitle: true,
-      ),     
+      ),
       backgroundColor: Colors.grey[300],
       body: Column(
         children: [
-          
           const SizedBox(height: 25),
 
           Text(
@@ -40,48 +38,52 @@ class _DropOffSelectionPageState extends State<DropOffSelectionPage> {
               fontSize: 22,
             ),
           ),
-          
+
           const SizedBox(height: 25),
 
           // Address Text Field
           MyTextField(
-            controller: addressController, 
-            hintText: 'Address', 
-            obscureText: false
-          ),
-          
+              controller: addressController,
+              hintText: 'Address',
+              obscureText: false),
+
           const SizedBox(height: 10),
 
           // Note Field
           MyTextField(
-            controller: noteController, 
-            hintText: 'Note', 
-            obscureText: false
-          ),
+              controller: noteController, hintText: 'Note', obscureText: false),
 
           const SizedBox(height: 25),
 
           // Contact Number Text Field
           MyTextField(
-            controller: contactNumberController, 
-            hintText: 'Contact Number', 
-            obscureText: false
-          ),
+              controller: contactNumberController,
+              hintText: 'Contact Number',
+              obscureText: false),
 
           const SizedBox(height: 10),
 
           // Contact Name Text Field
           MyTextField(
-            controller: contactNameController, 
-            hintText: 'Contact Name', 
-            obscureText: false
-          ),
+              controller: contactNameController,
+              hintText: 'Contact Name',
+              obscureText: false),
 
           const SizedBox(height: 25),
 
           MyButton(
-                  text: 'Confirm',
-                  onTap: () {},
+            text: 'Confirm',
+            onTap: () {
+              final dropoffData = {
+                'address': addressController.text,
+                'note': noteController.text,
+                'contactName': contactNameController.text,
+                'contactNumber': contactNumberController.text,
+                'type': 'DropOff',
+              };
+              BookingService.addBooking(dropoffData);
+              Navigator.pop(context);
+            },
           ),
         ],
       ),

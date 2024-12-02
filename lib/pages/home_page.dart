@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jloc_hauling_services/pages/dropoff_selection.dart';
-import 'package:jloc_hauling_services/pages/login_page.dart';
-import 'package:jloc_hauling_services/pages/pickup_selection.dart';
-import 'package:jloc_hauling_services/pages/signup_page.dart';
+import 'package:jloc_hauling_services/pages/booking_service.dart';
+import 'package:jloc_hauling_services/pages/customer_booking_status.dart'; // Ensure this file exists
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,127 +10,106 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController pickupController = TextEditingController();
+  final TextEditingController dropoffController = TextEditingController();
+
+  String selectedVehicle = 'Small Truck'; // Default vehicle
+
+  final List<String> vehicleOptions = [
+    'Small Truck',
+    'Medium Truck',
+    'Large Truck',
+  ];
+
+  void bookNow() {
+  final booking = {
+    'pickup': pickupController.text,
+    'dropoff': dropoffController.text,
+    'vehicle': selectedVehicle,
+  };
+
+  if (booking['pickup']!.isEmpty || booking['dropoff']!.isEmpty) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Please fill in all fields before submitting.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+    return;
+  }
+
+  // Add booking to the service
+  BookingService.addBooking(booking);
+
+  // Redirect to the booking status page
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => CustomerBookingStatus(bookingIndex: BookingService.getBookings().length - 1)),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset('lib/images/jloc_truck.png', height: 45),
-        backgroundColor: Colors.grey[200],
+        title: Text('Book a Hauling Service'),
         centerTitle: true,
       ),
-      drawer: Drawer(
-        backgroundColor: Colors.grey[200],
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(child: Text('Welcome!')),
-            ListTile(
-              leading: Icon(Icons.history),
-              title: Text('History'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: pickupController,
+              decoration: InputDecoration(
+                labelText: 'Pickup Location',
+                border: OutlineInputBorder(),
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+            SizedBox(height: 16),
+            TextField(
+              controller: dropoffController,
+              decoration: InputDecoration(
+                labelText: 'Drop-Off Location',
+                border: OutlineInputBorder(),
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Sign out'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
+            SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              value: selectedVehicle,
+              items: vehicleOptions
+                  .map((vehicle) => DropdownMenuItem(
+                        value: vehicle,
+                        child: Text(vehicle),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedVehicle = value!;
+                });
               },
+              decoration: InputDecoration(
+                labelText: 'Select Vehicle',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 32),
+            Center(
+              child: ElevatedButton(
+                onPressed: bookNow,
+                child: Text('Book Now'),
+              ),
             ),
           ],
         ),
-      ),
-      backgroundColor: Colors.grey[300],
-      body: Column(
-        children: [
-          const SizedBox(height: 50),
-          InkWell(
-            onTap: () {
-              // Define the action when tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const PickupSelectionPage()),
-              );
-            },
-            child: Container(
-              margin: EdgeInsets.fromLTRB(20, 0, 20, 2),
-              padding: EdgeInsets.all(16.0), // Add padding inside the box
-              decoration: BoxDecoration(
-                color: Colors.grey[200], // Background color of the box
-                borderRadius: BorderRadius.circular(1.0), // Rounded corners
-              ),
-              child: Center(
-                child: Text(
-                  "Select Pickup Location",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.grey[700], // Font size
-                  ),
-                ),
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              // Define the action when tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const DropOffSelectionPage()),
-              );
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.all(16.0), // Add padding inside the box
-              decoration: BoxDecoration(
-                color: Colors.grey[200], // Background color of the box
-                borderRadius: BorderRadius.circular(1.0), // Rounded corners
-              ),
-              child: Center(
-                child: Text(
-                  "Select Drop Off Location",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.grey[700], // Font size
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Available vehicles',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          // Expanded ListView to display available vehicles
-          Expanded(
-            child: ListView.builder(
-              itemCount: 10, // Number of items in the ListView
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Icon(Icons.local_shipping),
-                  title: Text('Vehicle ${index + 1}'),
-                  subtitle: Text('Description for vehicle ${index + 1}'),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

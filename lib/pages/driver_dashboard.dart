@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jloc_hauling_services/pages/booking_service.dart';
+import 'package:jloc_hauling_services/pages/driver_booking_details.dart';
 import 'package:jloc_hauling_services/pages/dropoff_selection.dart';
 import 'package:jloc_hauling_services/pages/login_page.dart';
 import 'package:jloc_hauling_services/pages/pickup_selection.dart';
@@ -12,36 +14,40 @@ class DriverDashboard extends StatefulWidget {
 }
 
 class _DriverDashboardState extends State<DriverDashboard> {
-  // Sample list of customer bookings
-  final List<Map<String, String>> bookings = [
-    {"name": "John Doe", "location": "123 Main St", "destination": "456 Elm St"},
-    {"name": "Jane Smith", "location": "789 Oak St", "destination": "321 Pine St"},
-    {"name": "Mike Johnson", "location": "135 Maple St", "destination": "246 Cedar St"},
-  ];
+  final bookings = BookingService.getBookings();
 
-  // Function to handle booking acceptance
   void acceptBooking(int index) {
-    final booking = bookings[index];
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Booking Accepted'),
-        content: Text(
-            'You have accepted the booking from ${booking["name"]}.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+  final booking = BookingService.getBookings()[index];
 
-    // Optionally remove the accepted booking from the queue
-    setState(() {
-      bookings.removeAt(index);
-    });
-  }
+  // Show a dialog with the booking details
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Booking Accepted'),
+      content: Text(
+        'You have accepted the following booking:\n\n'
+        'Pickup: ${booking["pickup"]}\n'
+        'Drop-Off: ${booking["dropoff"]}\n'
+        'Vehicle: ${booking["vehicle"]}',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DriverBookingDetails(bookingIndex: index),
+              ),
+            );
+          },
+          child: Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,9 +99,10 @@ class _DriverDashboardState extends State<DriverDashboard> {
                   final booking = bookings[index];
                   return Card(
                     child: ListTile(
-                      title: Text(booking['name']!),
-                      subtitle: Text(
-                          'From: ${booking['location']} \nTo: ${booking['destination']}'),
+                      title: Text('Booking Request'),
+                      subtitle: Text('Pickup: ${booking['pickup']}\n'
+                          'Drop-Off: ${booking['dropoff']}\n'
+                          'Vehicle: ${booking['vehicle']}'),
                       trailing: ElevatedButton(
                         onPressed: () => acceptBooking(index),
                         child: Text('Accept'),
