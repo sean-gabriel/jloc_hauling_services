@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jloc_hauling_services/pages/booking_service.dart';
 import 'package:jloc_hauling_services/pages/driver_booking_details.dart';
-import 'package:jloc_hauling_services/pages/dropoff_selection.dart';
 import 'package:jloc_hauling_services/pages/login_page.dart';
 import 'package:jloc_hauling_services/pages/pickup_selection.dart';
 import 'package:jloc_hauling_services/pages/signup_page.dart';
@@ -27,6 +26,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
       content: Text(
         'You have accepted the following booking:\n\n'
         'Pickup: ${booking["pickup"]}\n'
+        'Pickup Time: ${booking["pickupTime"]}\n'
         'Drop-Off: ${booking["dropoff"]}\n'
         'Vehicle: ${booking["vehicle"]}',
       ),
@@ -101,6 +101,7 @@ class _DriverDashboardState extends State<DriverDashboard> {
                     child: ListTile(
                       title: Text('Booking Request'),
                       subtitle: Text('Pickup: ${booking['pickup']}\n'
+                          'Pickup Time: ${booking['pickupTime']}\n'
                           'Drop-Off: ${booking['dropoff']}\n'
                           'Vehicle: ${booking['vehicle']}'),
                       trailing: ElevatedButton(

@@ -25,7 +25,13 @@ class DriverBookingDetails extends StatelessWidget {
           children: [
             Text('Pickup Location: ${booking["pickup"]}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
+            Text('Pickup Location Description: ${booking["pickupDescription"]}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Pickup Time: ${booking["pickupTime"]}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
             Text('Drop-Off Location: ${booking["dropoff"]}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 10),
+            Text('Drop-Off Location Description: ${booking["dropoffDescription"]}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 10),
             Text('Vehicle: ${booking["vehicle"]}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 20),
